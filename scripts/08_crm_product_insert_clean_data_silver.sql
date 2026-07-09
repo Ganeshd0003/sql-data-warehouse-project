@@ -27,7 +27,7 @@ INSERT INTO silver.crm_prd_info
 	prd_start_dt,
 	prd_end_dt
 )
-	SELECT TOP 1000
+	SELECT
 		prd_id,
 		REPLACE(SUBSTRING(prd_key,1,5),'-','_') AS cat_id,
 		SUBSTRING(prd_key,7,LEN(prd_key)) AS cat_key,
