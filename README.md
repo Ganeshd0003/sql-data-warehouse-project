@@ -18,7 +18,7 @@ Build a modern data warehouse using SQL Server for sales analytics.
 - Draw.io (ER Diagram)
 
 ## Architecture
-
+![README Page](docs/readme_page.png)
 CSV Files
 ↓
 Bronze Layer
