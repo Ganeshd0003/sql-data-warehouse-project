@@ -14,4 +14,5 @@ CREATE OR ALTER VIEW gold.fact_sales AS
 	ON sd.sls_cust_id = dc.customer_id
 	LEFT JOIN gold.dim_products AS dp
 	ON sd.sls_prd_key = dp.product_key
+	WHERE sd.sls_order_dt IS NOT NULL
 );
