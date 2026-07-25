@@ -1,63 +1,93 @@
--- Creating DDL for crm dataset it contains customer information, product information and sales information
+/*
+===============================================================================
+DDL Script: Create Bronze Tables
+===============================================================================
+Script Purpose:
+    This script creates tables in the 'bronze' schema, dropping existing tables
+    if they already exist.
+    Run this script to re-define the DDL structure of 'bronze' Tables
+===============================================================================
+*/
 
--- CRM Customer Info
-CREATE TABLE bronze.crm_cust_info
-(
-	cst_id INT,
-	cst_key VARCHAR(30),
-	cst_firstname VARCHAR(20),
-	cst_lastname VARCHAR(20),
-	cst_marital_status VARCHAR(20),
-	cst_gender VARCHAR(20),
-	cst_Create_date DATE
+USE DataWarehouse;
+GO
+
+IF OBJECT_ID('bronze.crm_cust_info', 'U') IS NOT NULL
+    DROP TABLE bronze.crm_cust_info;
+GO
+
+CREATE TABLE bronze.crm_cust_info (
+    cst_id              INT,
+    cst_key             VARCHAR(50),
+    cst_firstname       VARCHAR(50),
+    cst_lastname        VARCHAR(50),
+    cst_marital_status  VARCHAR(50),
+    cst_gndr            VARCHAR(50),
+    cst_create_date     DATE
 );
+GO
 
--- CRM Product Info
-CREATE TABLE bronze.crm_prd_info
-(
-	prd_id INT,
-	prd_key	VARCHAR(30),
-	prd_nm VARCHAR(50),
-	prd_cost DECIMAL(10,2),
-	prd_line VARCHAR(10),
-	prd_start_dt DATE,
-	prd_end_dt DATE
+IF OBJECT_ID('bronze.crm_prd_info', 'U') IS NOT NULL
+    DROP TABLE bronze.crm_prd_info;
+GO
+
+CREATE TABLE bronze.crm_prd_info (
+    prd_id       INT,
+    prd_key      VARCHAR(50),
+    prd_nm       VARCHAR(50),
+    prd_cost     INT,
+    prd_line     VARCHAR(50),
+    prd_start_dt DATETIME,
+    prd_end_dt   DATETIME
 );
+GO
 
--- CRM Sales Info
-CREATE TABLE bronze.crm_sales_details
-(
-	sls_ord_num	VARCHAR(20),
-	sls_prd_key	VARCHAR(20),
-	sls_cust_id	INT,
-	sls_order_dt VARCHAR(20),
-	sls_ship_dt	VARCHAR(20),
-	sls_due_dt	VARCHAR(20),
-	sls_sales INT,
-	sls_quantity INT,
-	sls_price DECIMAL(10,2)
+IF OBJECT_ID('bronze.crm_sales_details', 'U') IS NOT NULL
+    DROP TABLE bronze.crm_sales_details;
+GO
+
+CREATE TABLE bronze.crm_sales_details (
+    sls_ord_num  VARCHAR(50),
+    sls_prd_key  VARCHAR(50),
+    sls_cust_id  INT,
+    sls_order_dt INT,
+    sls_ship_dt  INT,
+    sls_due_dt   INT,
+    sls_sales    INT,
+    sls_quantity INT,
+    sls_price    INT
 );
+GO
 
+IF OBJECT_ID('bronze.erp_loc_a101', 'U') IS NOT NULL
+    DROP TABLE bronze.erp_loc_a101;
+GO
 
--- Creating DDL for erp dataset it contains CUST_AZ12, LOC_A101 and PX_CAT_G1V2
-
-CREATE TABLE bronze.erp_cust_az12
-(
-	CID	VARCHAR(20),
-	BDATE DATE,
-	GEN VARCHAR(20)
+CREATE TABLE bronze.erp_loc_a101 (
+    cid    VARCHAR(50),
+    cntry  VARCHAR(50)
 );
+GO
 
-CREATE TABLE bronze.erp_loc_a101
-(
-	CID	VARCHAR(20),
-	CNTRY VARCHAR(20)
+IF OBJECT_ID('bronze.erp_cust_az12', 'U') IS NOT NULL
+    DROP TABLE bronze.erp_cust_az12;
+GO
+
+CREATE TABLE bronze.erp_cust_az12 (
+    cid    VARCHAR(50),
+    bdate  DATE,
+    gen    VARCHAR(50)
 );
+GO
 
-CREATE TABLE bronze.erp_px_cat_g1v2
-(
-	ID VARCHAR(20),CAT VARCHAR(20),
-	SUBCAT VARCHAR(20),
-	MAINTENANCE VARCHAR(20)
+IF OBJECT_ID('bronze.erp_px_cat_g1v2', 'U') IS NOT NULL
+    DROP TABLE bronze.erp_px_cat_g1v2;
+GO
 
+CREATE TABLE bronze.erp_px_cat_g1v2 (
+    id           VARCHAR(50),
+    cat          VARCHAR(50),
+    subcat       VARCHAR(50),
+    maintenance  VARCHAR(50)
 );
+GO

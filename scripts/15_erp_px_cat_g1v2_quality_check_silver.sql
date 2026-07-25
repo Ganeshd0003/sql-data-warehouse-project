@@ -1,29 +1,26 @@
--- Preview the ERP Product Category table
-SELECT *
-FROM bronze.erp_px_cat_g1v2;
+-- =============================================================================
+-- Quality Checks
+-- =============================================================================
+USE DataWarehouse;
 
--- Check for NULL Product Category IDs or leading/trailing spaces
-SELECT ID
+GO
+
+-- Check for Unwanted Spaces
+-- Expectation: No Results
+SELECT
+    id
 FROM bronze.erp_px_cat_g1v2
-WHERE ID IS NULL
-   OR TRIM(ID) <> ID;
+WHERE id != TRIM(id);
 
--- Review distinct Category values
-SELECT DISTINCT CAT
+-- Data Standardization & Consistency
+SELECT DISTINCT
+    cat
 FROM bronze.erp_px_cat_g1v2;
 
--- Review distinct Subcategory values
-SELECT DISTINCT SUBCAT
+SELECT DISTINCT
+    subcat
 FROM bronze.erp_px_cat_g1v2;
 
--- Review distinct Maintenance values
-SELECT DISTINCT MAINTENANCE
+SELECT DISTINCT
+    maintenance
 FROM bronze.erp_px_cat_g1v2;
-
--- Verify that Category IDs exist in the Silver Product table
-SELECT *
-FROM bronze.erp_px_cat_g1v2
-WHERE ID IN (
-    SELECT CAT_ID
-    FROM silver.crm_prd_info
-);

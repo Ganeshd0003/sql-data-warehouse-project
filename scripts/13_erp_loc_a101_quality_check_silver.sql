@@ -1,17 +1,19 @@
--- Preview Bronze ERP Location data
-SELECT *
-FROM bronze.erp_loc_a101;
+-- =============================================================================
+-- Quality Checks
+-- =============================================================================
+USE DataWarehouse;
 
--- Preview Silver Customer data for reference
-SELECT *
-FROM silver.crm_cust_info;
+GO
 
--- Check for NULL Customer IDs or leading/trailing spaces
-SELECT cid
+-- Check for Unwanted CID Format
+-- Expectation: No Results
+SELECT
+    cid
 FROM bronze.erp_loc_a101
-WHERE cid IS NULL
-   OR TRIM(cid) <> cid;
+WHERE REPLACE(cid, '-', '') != cid;
 
--- Review all distinct Country values to identify inconsistencies
-SELECT DISTINCT cntry
-FROM bronze.erp_loc_a101;
+-- Data Standardization & Consistency
+SELECT DISTINCT
+    cntry
+FROM bronze.erp_loc_a101
+ORDER BY cntry;

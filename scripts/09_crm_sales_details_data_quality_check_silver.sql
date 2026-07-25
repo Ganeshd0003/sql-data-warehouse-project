@@ -1,73 +1,79 @@
--- Preview Bronze and Silver tables
-SELECT TOP 100 * FROM bronze.crm_sales_details;
-SELECT TOP 100 * FROM bronze.crm_prd_info;
-SELECT TOP 100 * FROM silver.crm_prd_info;
+-- =============================================================================
+-- Quality Checks
+-- =============================================================================
+USE DataWarehouse;
 
--- Check for leading/trailing spaces in Order Number
-SELECT *
+GO
+
+-- Check for Unwanted Spaces
+-- Expectation: No Results
+SELECT
+    sls_ord_num
 FROM bronze.crm_sales_details
-WHERE sls_ord_num <> TRIM(sls_ord_num);
+WHERE sls_ord_num != TRIM(sls_ord_num);
 
--- Check for invalid Product Keys
-SELECT *
+-- Check for Invalid Product Keys
+-- Expectation: No Results
+SELECT
+    sls_prd_key
 FROM bronze.crm_sales_details
 WHERE sls_prd_key NOT IN (
-    SELECT cat_key
+    SELECT prd_key
     FROM silver.crm_prd_info
 );
 
--- Check for invalid Customer IDs
-SELECT *
+-- Check for Invalid Customer IDs
+-- Expectation: No Results
+SELECT
+    sls_cust_id
 FROM bronze.crm_sales_details
 WHERE sls_cust_id NOT IN (
     SELECT cst_id
     FROM silver.crm_cust_info
 );
 
--- Attempt 1:
--- Format YYYYMMDD as YYYY-MM-DD using string functions.
--- This only returns a formatted STRING, not a DATE datatype.
+-- Check for Invalid Order Dates
+-- Expectation: No Results
 SELECT
-    CONCAT(
-        SUBSTRING(sls_order_dt, 1, 4), '-',
-        SUBSTRING(sls_order_dt, 5, 2), '-',
-        SUBSTRING(sls_order_dt, 7, 2)
-    ) AS sls_order_dt
-FROM bronze.crm_sales_details;
+    NULLIF(sls_order_dt, 0) AS sls_order_dt
+FROM bronze.crm_sales_details
+WHERE sls_order_dt <= 0
+   OR LEN(sls_order_dt) != 8
+   OR sls_order_dt > 20500101
+   OR TRY_CAST(CAST(sls_order_dt AS VARCHAR) AS DATE) IS NULL;
 
--- Attempt 2:
--- Convert the value to DATE using CASE.
--- This approach doesn't reliably work for YYYYMMDD values.
+-- Check for Invalid Shipping Dates
+-- Expectation: No Results
 SELECT
-    sls_order_dt,
-    CASE
-        WHEN sls_order_dt = 0 OR LEN(sls_order_dt) <> 8 THEN NULL
-        ELSE CAST(sls_order_dt AS DATE)
-    END AS sls_order_dt
-FROM bronze.crm_sales_details;
+    NULLIF(sls_ship_dt, 0) AS sls_ship_dt
+FROM bronze.crm_sales_details
+WHERE sls_ship_dt <= 0
+   OR LEN(sls_ship_dt) != 8
+   OR sls_ship_dt > 20500101
+   OR TRY_CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE) IS NULL;
 
--- Recommended approach:
--- Convert the numeric value to CHAR(8), then use TRY_CONVERT with style 112 (YYYYMMDD).
--- Returns NULL for invalid dates instead of throwing an error.
+-- Check for Invalid Due Dates
+-- Expectation: No Results
 SELECT
-    sls_order_dt,
-    TRY_CONVERT(DATE, CAST(sls_order_dt AS VARCHAR(8)), 112) AS sls_order_dt
-FROM bronze.crm_sales_details;
-
--- Check for NULL or negative Sales values
-SELECT sls_sales
+    NULLIF(sls_due_dt, 0) AS sls_due_dt
 FROM bronze.crm_sales_details
-WHERE sls_sales IS NULL
-   OR sls_sales < 0;
+WHERE sls_due_dt <= 0
+   OR LEN(sls_due_dt) != 8
+   OR sls_due_dt > 20500101
+   OR TRY_CAST(CAST(sls_due_dt AS VARCHAR) AS DATE) IS NULL;
 
--- Check for NULL or negative Quantity values
-SELECT sls_quantity
+-- Check Data Consistency: Sales = Quantity × Price
+-- Sales must not be NULL, zero, or negative
+SELECT DISTINCT
+    sls_sales,
+    sls_quantity,
+    sls_price
 FROM bronze.crm_sales_details
-WHERE sls_quantity IS NULL
-   OR sls_quantity < 0;
-
--- Check for NULL or negative Price values
-SELECT sls_price
-FROM bronze.crm_sales_details
-WHERE sls_price IS NULL
-   OR sls_price < 0;
+WHERE sls_sales != sls_quantity * ABS(sls_price)
+   OR sls_sales IS NULL
+   OR sls_quantity IS NULL
+   OR sls_price IS NULL
+   OR sls_sales <= 0
+   OR sls_quantity <= 0
+   OR sls_price <= 0
+ORDER BY sls_sales, sls_quantity, sls_price;

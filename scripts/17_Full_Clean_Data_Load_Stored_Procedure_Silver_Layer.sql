@@ -1,3 +1,7 @@
+USE DataWarehouse;
+
+GO
+
 CREATE OR ALTER PROCEDURE silver.full_data_loading
 AS
 BEGIN
@@ -14,7 +18,7 @@ BEGIN
         cst_firstname,
         cst_lastname,
         cst_marital_status,
-        cst_gender,
+        cst_gndr,
         cst_create_date
     )
     SELECT
@@ -27,11 +31,11 @@ BEGIN
             WHEN 'M' THEN 'Married'
             ELSE 'n/a'
         END AS cst_marital_status,
-        CASE TRIM(ISNULL(cst_gender, ''))
+        CASE TRIM(ISNULL(cst_gndr, ''))
             WHEN 'M' THEN 'Male'
             WHEN 'F' THEN 'Female'
             ELSE 'n/a'
-        END AS cst_gender,
+        END AS cst_gndr,
         cst_create_date
     FROM
     (
@@ -54,7 +58,7 @@ BEGIN
     (
 	    prd_id,
 	    cat_id,
-	    cat_key,
+	    prd_key,
 	    prd_nm,
 	    prd_cost,
 	    prd_line,
@@ -64,7 +68,7 @@ BEGIN
 	    SELECT TOP 1000
 		    prd_id,
 		    REPLACE(SUBSTRING(prd_key,1,5),'-','_') AS cat_id,
-		    SUBSTRING(prd_key,7,LEN(prd_key)) AS cat_key,
+		    SUBSTRING(prd_key,7,LEN(prd_key)) AS prd_key,
 		    prd_nm,
 		    ISNULL(prd_cost,0) AS prd_cost,
 		    CASE UPPER(TRIM(prd_line))
@@ -86,7 +90,6 @@ BEGIN
 		    ) AS DATE
 	    ) AS prd_end_dt
 	    FROM bronze.crm_prd_info;
-
 
     --3)
     PRINT '>> Truncating table : silver.crm_sales_details'

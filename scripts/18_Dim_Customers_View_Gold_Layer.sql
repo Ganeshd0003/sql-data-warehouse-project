@@ -1,3 +1,7 @@
+USE DataWarehouse;
+
+GO
+
 CREATE OR ALTER VIEW gold.dim_customers AS
 (
 	SELECT
@@ -8,7 +12,7 @@ CREATE OR ALTER VIEW gold.dim_customers AS
 		ci.cst_lastname AS last_name,
 		el.CNTRY AS country,
 		ci.cst_marital_status AS marital_status,
-		COALESCE(NULLIF(ci.cst_gender, 'n/a'), ec.GEN, 'n/a') AS gender,
+		COALESCE(NULLIF(ci.cst_gndr, 'n/a'), ec.GEN, 'n/a') AS gender,
 		ec.BDATE birthdate,
 		ci.cst_Create_date AS create_date
 	FROM silver.crm_cust_info AS ci

@@ -1,22 +1,25 @@
--- Preview the ERP Customer table
-SELECT *
-FROM bronze.erp_cust_az12;
+-- =============================================================================
+-- Quality Checks
+-- =============================================================================
+USE DataWarehouse;
 
--- Check for NULL Customer IDs
-SELECT cid
+GO
+
+-- Check for Unwanted CID Format
+-- Expectation: No Results
+SELECT
+    cid
 FROM bronze.erp_cust_az12
-WHERE cid IS NULL;
+WHERE cid LIKE 'NAS%';
 
--- Check for NULL Birth Dates
-SELECT bdate
-FROM bronze.erp_cust_az12
-WHERE bdate IS NULL;
-
--- Check for invalid Birth Dates (future dates)
-SELECT *
+-- Check for Invalid Birth Dates
+-- Expectation: No Results
+SELECT
+    bdate
 FROM bronze.erp_cust_az12
 WHERE bdate > GETDATE();
 
--- Review all distinct Gender values to identify inconsistencies
-SELECT DISTINCT gen
+-- Data Standardization & Consistency
+SELECT DISTINCT
+    gen
 FROM bronze.erp_cust_az12;
