@@ -15,6 +15,7 @@ Build a modern data warehouse using SQL Server for sales analytics.
 - SQL Server
 - SSMS
 - Git
+- GitHub
 - Draw.io (ER Diagram)
 
 ## Architecture
