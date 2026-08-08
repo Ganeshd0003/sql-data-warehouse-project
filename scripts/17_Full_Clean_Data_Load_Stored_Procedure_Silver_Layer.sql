@@ -46,7 +46,7 @@ BEGIN
                ) AS Flag
         FROM bronze.crm_cust_info
     ) t
-    WHERE Flag = 1;
+    WHERE Flag = 1 AND t.cst_id IS NOT NULL;
 
     -- 2)
     PRINT '>> Truncating table : silver.crm_prd_info'
