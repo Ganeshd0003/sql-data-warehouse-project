@@ -10,7 +10,6 @@ Script Purpose:
 */
 
 USE DataWarehouse;
-
 GO
 
 IF OBJECT_ID('bronze.crm_cust_info', 'U') IS NOT NULL
