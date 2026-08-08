@@ -1,5 +1,4 @@
 USE DataWarehouse;
-
 GO
 
 TRUNCATE TABLE silver.erp_cust_az12;

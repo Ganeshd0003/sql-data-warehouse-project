@@ -1,9 +1,8 @@
+USE DataWarehouse;
+GO
 -- =============================================================================
 -- Quality Checks
 -- =============================================================================
-USE DataWarehouse;
-
-GO
 
 -- Check for Unwanted CID Format
 -- Expectation: No Results

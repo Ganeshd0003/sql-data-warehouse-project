@@ -1,5 +1,4 @@
 USE DataWarehouse;
-
 GO
 
 IF OBJECT_ID('silver.crm_prd_info', 'U') IS NOT NULL

@@ -1,5 +1,4 @@
 USE DataWarehouse;
-
 GO
 
 CREATE OR ALTER VIEW gold.fact_sales AS

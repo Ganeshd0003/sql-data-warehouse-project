@@ -1,5 +1,4 @@
 USE DataWarehouse;
-
 GO
 
 CREATE OR ALTER PROCEDURE silver.full_data_loading

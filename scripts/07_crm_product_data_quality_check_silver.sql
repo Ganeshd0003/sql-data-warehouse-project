@@ -2,7 +2,6 @@
 -- Quality Checks
 -- =============================================================================
 USE DataWarehouse;
-
 GO
 
 -- Check for NULLs or Duplicates in Primary Key

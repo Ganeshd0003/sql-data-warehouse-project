@@ -1,5 +1,4 @@
 USE DataWarehouse;
-
 GO
 
 CREATE OR ALTER VIEW gold.dim_products AS
